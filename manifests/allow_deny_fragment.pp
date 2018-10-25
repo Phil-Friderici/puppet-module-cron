@@ -1,8 +1,13 @@
+# == Define: cron::allow_deny_fragment
+#
+# Defined type to add users to cron.allow and cron.deny
+#
 define cron::allow_deny_fragment (
   $users,
   $type,
 ) {
-  include cron
+
+  include ::cron
 
   validate_re($type, ['^allow$','^deny$'])
   validate_array($users)

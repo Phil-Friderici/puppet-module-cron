@@ -229,27 +229,27 @@ class cron (
 
   # Initialize cron.allow
   concat { $cron_allow_path:
-    ensure  => $cron_allow,
-    owner   => $cron_allow_owner,
-    group   => $cron_allow_group,
-    mode    => $cron_allow_mode,
+    ensure => $cron_allow,
+    owner  => $cron_allow_owner,
+    group  => $cron_allow_group,
+    mode   => $cron_allow_mode,
   }
   concat::fragment { "${cron_allow_path} header":
-    target => $cron_allow_path,
-    order  => '01',
+    target  => $cron_allow_path,
+    order   => '01',
     content => template('cron/_cron_allow_deny_header.erb'),
   }
 
   # Initialize cron.deny
   concat { $cron_deny_path:
-    ensure  => $cron_deny,
-    owner   => $cron_deny_owner,
-    group   => $cron_deny_group,
-    mode    => $cron_deny_mode,
+    ensure => $cron_deny,
+    owner  => $cron_deny_owner,
+    group  => $cron_deny_group,
+    mode   => $cron_deny_mode,
   }
   concat::fragment { "${cron_deny_path} header":
-    target => $cron_deny_path,
-    order  => '01',
+    target  => $cron_deny_path,
+    order   => '01',
     content => template('cron/_cron_allow_deny_header.erb'),
   }
 
