@@ -58,6 +58,21 @@ class cron (
     $service_ensure_real = $service_ensure
   }
 
+  if $cron_deny == 'file' {
+    notify { '*** DEPRECATION WARNING***: Setting $cron_deny to <file> is deprecated, will automatically use <present> instead. Please update your configuration. Support for the value <file> will be removed in the near future!': }
+    $cron_deny_real = 'present'
+  } else {
+    $cron_deny_real = $cron_deny
+  }
+
+  if $cron_allow == 'file' {
+    notify { '*** DEPRECATION WARNING***: Setting $cron_allow to <file> is deprecated, will automatically use <present> instead. Please update your configuration. Support for the value <file> will be removed in the near future!': }
+    $cron_allow_real = 'present'
+  } else {
+    $cron_allow_real = $cron_allow
+  }
+
+
   case $::osfamily {
     'Debian': {
       $package_name_default = 'cron'
@@ -156,8 +171,8 @@ class cron (
   # Validation
   validate_re($service_ensure_real, '^(running)|(stopped)$', "cron::service_ensure is <${service_ensure_real}> and must be running or stopped")
   validate_re($package_ensure, '^(present)|(installed)|(absent)$', "cron::package_ensure is <${package_ensure}> and must be absent, present or installed")
-  validate_re($cron_allow, '^(absent|file|present)$', "cron::cron_allow is <${cron_allow}> and must be absent, file or present")
-  validate_re($cron_deny, '^(absent|file|present)$', "cron::cron_deny is <${cron_deny}> and must be absent, file or present")
+  validate_re($cron_allow_real, '^(absent|present)$', "cron::cron_allow is <${cron_allow_real}> and must be absent or present")
+  validate_re($cron_deny_real, '^(absent|present)$', "cron::cron_deny is <${cron_deny_real}> and must be absent or present")
 
   case type3x($service_enable_real) {
     'string': {
@@ -229,7 +244,7 @@ class cron (
 
   # Initialize cron.allow
   concat { $cron_allow_path:
-    ensure => $cron_allow,
+    ensure => $cron_allow_real,
     owner  => $cron_allow_owner,
     group  => $cron_allow_group,
     mode   => $cron_allow_mode,
@@ -242,7 +257,7 @@ class cron (
 
   # Initialize cron.deny
   concat { $cron_deny_path:
-    ensure => $cron_deny,
+    ensure => $cron_deny_real,
     owner  => $cron_deny_owner,
     group  => $cron_deny_group,
     mode   => $cron_deny_mode,

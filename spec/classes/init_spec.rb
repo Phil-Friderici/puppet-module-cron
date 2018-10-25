@@ -594,6 +594,16 @@ describe 'cron' do
     end
   end
 
+  ['allow','deny'].each do |parameter|
+    describe "with cron_#{parameter} set to deprecated value <file>" do
+      let (:params) { { :"cron_#{parameter}" => 'file'} }
+
+      it { should contain_notify("*** DEPRECATION WARNING***: Setting $cron_#{parameter} to <file> is deprecated, will automatically use <present> instead. Please update your configuration. Support for the value <file> will be removed in the near future!") }
+      it { should contain_concat("/etc/cron.#{parameter}").with_ensure('present') }
+    end
+  end
+
+
   describe 'variable data type and content validations' do
     validations = {
       'absolute_path' => {
@@ -635,9 +645,9 @@ describe 'cron' do
       },
       'regex_file_ensure' => {
         :name    => ['cron_allow','cron_deny'],
-        :valid   => ['absent','file','present'],
+        :valid   => ['absent','present'],
         :invalid => ['invalid','directory','link',['array'],a={'ha'=>'sh'},3,2.42,true,false,nil],
-        :message => 'must be absent, file or present',
+        :message => 'must be absent or present',
       },
       'regex_file_mode' => {
         :name    => ['crontab_mode','cron_dir_mode','cron_allow_mode','cron_deny_mode'],
