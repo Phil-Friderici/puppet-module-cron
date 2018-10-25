@@ -6,6 +6,10 @@ describe 'cron::user::crontab' do
       :facts_hash => {
         :osfamily               => 'Debian',
         :operatingsystemrelease => '8.0',
+        :concat_basedir         => '/concat/basedir', # concat
+        :id                     => 'root',            # concat
+        :kernel                 => 'Linux',           # concat
+        :path                   => '/usr/bin:/bin',   # concat
       },
       :path_default => '/var/spool/cron/crontabs'
     },
@@ -13,6 +17,10 @@ describe 'cron::user::crontab' do
       :facts_hash => {
         :osfamily               => 'RedHat',
         :operatingsystemrelease => '6.7',
+        :concat_basedir         => '/concat/basedir', # concat
+        :id                     => 'root',            # concat
+        :kernel                 => 'Linux',           # concat
+        :path                   => '/usr/bin:/bin',   # concat
       },
       :path_default => '/var/spool/cron'
     },
@@ -20,6 +28,10 @@ describe 'cron::user::crontab' do
       :facts_hash => {
         :osfamily               => 'Suse',
         :operatingsystemrelease => '12.1',
+        :concat_basedir         => '/concat/basedir', # concat
+        :id                     => 'root',            # concat
+        :kernel                 => 'Linux',           # concat
+        :path                   => '/usr/bin:/bin',   # concat
       },
       :path_default => '/var/spool/cron/tabs'
     },

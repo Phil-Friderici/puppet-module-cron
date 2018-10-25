@@ -6,6 +6,10 @@ describe 'cron::fragment' do
     {
       :osfamily               => 'RedHat',
       :operatingsystemrelease => '6.7',
+      :concat_basedir         => '/concat/basedir', # concat
+      :id                     => 'root',            # concat
+      :kernel                 => 'Linux',           # concat
+      :path                   => '/usr/bin:/bin',   # concat
     }
   end
 
@@ -81,17 +85,6 @@ describe 'cron::fragment' do
   end
 
   describe 'variable type and content validations' do
-    # set needed custom facts and variables
-    let(:facts) do
-      {
-        :osfamily => 'RedHat',
-        :operatingsystemrelease => '6.7',
-      }
-    end
-    let(:validation_params) { {
-#      :param => 'value',
-    } }
-
     validations = {
       'regex_file_ensure' => {
         :name    => ['ensure'],
@@ -119,23 +112,22 @@ describe 'cron::fragment' do
       },
     }
 
-    validations.sort.each do |type,var|
+    validations.sort.each do |type, var|
+      mandatory_params = {} if mandatory_params.nil?
       var[:name].each do |var_name|
-
+        var[:params] = {} if var[:params].nil?
         var[:valid].each do |valid|
-          context "with #{var_name} (#{type}) set to valid #{valid} (as #{valid.class})" do
-            let(:params) { validation_params.merge({:"#{var_name}" => valid, }) }
+          context "when #{var_name} (#{type}) is set to valid #{valid} (as #{valid.class})" do
+            let(:params) { [mandatory_params, var[:params], { :"#{var_name}" => valid, }].reduce(:merge) }
             it { should compile }
           end
         end
 
         var[:invalid].each do |invalid|
-          context "with #{var_name} (#{type}) set to invalid #{invalid} (as #{invalid.class})" do
-            let(:params) { validation_params.merge({:"#{var_name}" => invalid, }) }
+          context "when #{var_name} (#{type}) is set to invalid #{invalid} (as #{invalid.class})" do
+            let(:params) { [mandatory_params, var[:params], { :"#{var_name}" => invalid, }].reduce(:merge) }
             it 'should fail' do
-              expect {
-                should contain_class(subject)
-              }.to raise_error(Puppet::Error,/#{var[:message]}/)
+              expect { should contain_class(subject) }.to raise_error(Puppet::Error, /#{var[:message]}/)
             end
           end
         end

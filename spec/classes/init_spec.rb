@@ -4,6 +4,10 @@ describe 'cron' do
     {
       :osfamily               => 'RedHat',
       :operatingsystemrelease => '6.7',
+      :concat_basedir         => '/concat/basedir', # concat
+      :id                     => 'root',            # concat
+      :kernel                 => 'Linux',           # concat
+      :path                   => '/usr/bin:/bin',   # concat
     }
   end
 
@@ -214,6 +218,10 @@ describe 'cron' do
         {
           :osfamily               => v[:osfamily],
           :operatingsystemrelease => v[:osrelease],
+          :concat_basedir         => '/concat/basedir', # concat
+          :id                     => 'root',            # concat
+          :kernel                 => 'Linux',           # concat
+          :path                   => '/usr/bin:/bin',   # concat
         }
       end
 
@@ -237,6 +245,10 @@ describe 'cron' do
       {
         :osfamily               => 'RedHat',
         :operatingsystemrelease => '5.5',
+        :concat_basedir         => '/concat/basedir', # concat
+        :id                     => 'root',            # concat
+        :kernel                 => 'Linux',           # concat
+        :path                   => '/usr/bin:/bin',   # concat
       }
     end
     let (:params) do
@@ -433,6 +445,10 @@ describe 'cron' do
           {
             :osfamily               => v[:osfamily],
             :operatingsystemrelease => v[:osrelease],
+            :concat_basedir         => '/concat/basedir', # concat
+            :id                     => 'root',            # concat
+            :kernel                 => 'Linux',           # concat
+            :path                   => '/usr/bin:/bin',   # concat
           }
         end
         let (:params) { { :periodic_jobs_manage => false } }
@@ -445,6 +461,10 @@ describe 'cron' do
         {
           :osfamily               => 'RedHat',
           :operatingsystemrelease => '5.5',
+          :concat_basedir         => '/concat/basedir', # concat
+          :id                     => 'root',            # concat
+          :kernel                 => 'Linux',           # concat
+          :path                   => '/usr/bin:/bin',   # concat
         }
       end
       let (:params) { { :periodic_jobs_manage => false } }
@@ -527,6 +547,10 @@ describe 'cron' do
       :osfamily               => 'RedHat',
       :operatingsystemrelease => '6.7',
       :fqdn                   => 'cron.example.local',
+      :concat_basedir         => '/concat/basedir', # concat
+      :id                     => 'root',            # concat
+      :kernel                 => 'Linux',           # concat
+      :path                   => '/usr/bin:/bin',   # concat
     } }
 
     context 'with defaults for all parameters' do
