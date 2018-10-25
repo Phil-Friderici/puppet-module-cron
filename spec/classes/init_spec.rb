@@ -113,8 +113,8 @@ describe 'cron' do
       should contain_package('crontabs').with({
         'ensure' => 'installed',
         'before' => [
-          'File[cron_allow]',
-          'File[cron_deny]',
+          'Concat[/etc/cron.allow]',
+          'Concat[/etc/cron.deny]',
           'File[crontab]',
           'File[cron_d]',
           'File[cron_hourly]',
@@ -124,26 +124,36 @@ describe 'cron' do
         ],
       })
     }
-    it {
-      should contain_file('cron_allow').with({
-        'ensure'  => 'absent',
-        'path'    => '/etc/cron.allow',
-        'owner'   => 'root',
-        'group'   => 'root',
-        'mode'    => '0644',
+    it do
+      should contain_concat('/etc/cron.allow').with({
+        'ensure' => 'absent',
+        'owner'  => 'root',
+        'group'  => 'root',
+        'mode'   => '0644',
+      })
+    end
+    it do
+      should contain_concat__fragment('/etc/cron.allow header').with({
+        'target'  => '/etc/cron.allow',
+        'order'   => '01',
         'content' => "# This file is being maintained by Puppet.\n# DO NOT EDIT\n",
       })
-    }
-    it {
-      should contain_file('cron_deny').with({
-        'ensure'  => 'present',
-        'path'    => '/etc/cron.deny',
-        'owner'   => 'root',
-        'group'   => 'root',
-        'mode'    => '0644',
+    end
+    it do
+      should contain_concat('/etc/cron.deny').with({
+        'ensure' => 'present',
+        'owner'  => 'root',
+        'group'  => 'root',
+        'mode'   => '0644',
+      })
+    end
+    it do
+      should contain_concat__fragment('/etc/cron.deny header').with({
+        'target'  => '/etc/cron.deny',
+        'order'   => '01',
         'content' => "# This file is being maintained by Puppet.\n# DO NOT EDIT\n",
       })
-    }
+    end
     it {
       should contain_file('crontab').with({
         'ensure'  => 'file',
@@ -292,15 +302,15 @@ describe 'cron' do
         }
       end
 
-      it {
-        should contain_file('cron_allow').with({
-          'ensure'  => 'present',
-          'path'    => '/spec/cron_allow',
-          'owner'   => 'cron_allow_owner',
-          'group'   => 'cron_allow_group',
-          'mode'    => '0400',
+      it do
+        should contain_concat('/spec/cron_allow').with({
+          'ensure' => 'present',
+          'owner'  => 'cron_allow_owner',
+          'group'  => 'cron_allow_group',
+          'mode'   => '0400',
         })
-      }
+      end
+      it { should contain_concat__fragment('/spec/cron_allow header').with_target('/spec/cron_allow') }
     end
 
     context 'when cron_deny, cron_deny_group, cron_deny_mode, cron_deny_owner and cron_deny_path are set' do
@@ -314,15 +324,15 @@ describe 'cron' do
         }
       end
 
-      it {
-        should contain_file('cron_deny').with({
-          'ensure'  => 'absent',
-          'path'    => '/spec/cron_deny',
-          'owner'   => 'cron_deny_owner',
-          'group'   => 'cron_deny_group',
-          'mode'    => '0400',
+      it do
+        should contain_concat('/spec/cron_deny').with({
+          'ensure' => 'absent',
+          'owner'  => 'cron_deny_owner',
+          'group'  => 'cron_deny_group',
+          'mode'   => '0400',
         })
-      }
+      end
+      it { should contain_concat__fragment('/spec/cron_deny header').with_target('/spec/cron_deny') }
     end
 
     context 'when crontab_group, crontab_mode, crontab_owner and crontab_path are set' do
@@ -364,7 +374,12 @@ describe 'cron' do
 
     context 'when cron_allow_users is set to <[\'spec\',\'test\',\'allow\']>' do
       let (:params) { { :cron_allow_users => ['spec','test','allow'] } }
-      it { should contain_file('cron_allow').with_content("# This file is being maintained by Puppet.\n# DO NOT EDIT\nspec\ntest\nallow\n") }
+      it do
+        should contain_cron__allow_deny_fragment('Initial cron.allow users').with({
+          'type'  => 'allow',
+          'users' => %w(spec test allow),
+        })
+      end
     end
 
     context 'when cron_d_path is set to </spec/cron_d>' do
@@ -381,7 +396,12 @@ describe 'cron' do
 
     context 'when cron_deny_users is set to <[\'spec\',\'test\',\'deny\']>' do
       let (:params) { { :cron_deny_users => ['spec','test','deny'] } }
-      it { should contain_file('cron_deny').with_content("# This file is being maintained by Puppet.\n# DO NOT EDIT\nspec\ntest\ndeny\n") }
+      it do
+        should contain_cron__allow_deny_fragment('Initial cron.deny users').with({
+          'type'  => 'deny',
+          'users' => %w(spec test deny),
+        })
+      end
     end
 
     context 'when cron_dir_group is set to <cron_dir_group>' do
@@ -497,8 +517,8 @@ describe 'cron' do
     context 'when package_name is set to <cron242>' do
       let (:params) { { :package_name => 'cron242' } }
       it { should contain_package('cron242').with_before([
-        'File[cron_allow]',
-        'File[cron_deny]',
+        'Concat[/etc/cron.allow]',
+        'Concat[/etc/cron.deny]',
         'File[crontab]',
         'File[cron_d]',
         'File[cron_hourly]',
@@ -510,8 +530,8 @@ describe 'cron' do
     context 'when package_name is set to <[\'cron242\',\'cronhelper\']>' do
       let (:params) { { :package_name => ['cron242','cronhelper'] } }
       it { should contain_package('cron242').with_before([
-        'File[cron_allow]',
-        'File[cron_deny]',
+        'Concat[/etc/cron.allow]',
+        'Concat[/etc/cron.deny]',
         'File[crontab]',
         'File[cron_d]',
         'File[cron_hourly]',
@@ -520,8 +540,8 @@ describe 'cron' do
         'File[cron_monthly]',
       ] ) }
       it { should contain_package('cronhelper').with_before([
-        'File[cron_allow]',
-        'File[cron_deny]',
+        'Concat[/etc/cron.allow]',
+        'Concat[/etc/cron.deny]',
         'File[crontab]',
         'File[cron_d]',
         'File[cron_hourly]',
