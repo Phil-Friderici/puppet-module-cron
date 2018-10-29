@@ -7,6 +7,7 @@ define cron::allow_deny_fragment (
   $type,
 ) {
 
+  # variable validation
   include ::cron
 
   validate_re($type, ['^allow$','^deny$'],

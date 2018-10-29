@@ -44,6 +44,7 @@ class cron (
   $ensure_state                = undef,
 ) {
 
+  # variable preparation
   if $enable_cron != undef {
     notify { '*** DEPRECATION WARNING***: $enable_cron was renamed to $service_enable. Please update your configuration. Support for $enable_cron will be removed in the near future!': }
     $service_enable_real = $enable_cron
@@ -71,7 +72,6 @@ class cron (
   } else {
     $cron_allow_real = $cron_allow
   }
-
 
   case $::osfamily {
     'Debian': {
@@ -168,7 +168,7 @@ class cron (
     $service_name_real = $service_name
   }
 
-  # Validation
+  # variable validation
   validate_re($service_ensure_real, '^(running)|(stopped)$', "cron::service_ensure is <${service_ensure_real}> and must be running or stopped")
   validate_re($package_ensure, '^(present)|(installed)|(absent)$', "cron::package_ensure is <${package_ensure}> and must be absent, present or installed")
   validate_re($cron_allow_real, '^(absent|present)$', "cron::cron_allow is <${cron_allow_real}> and must be absent or present")
@@ -232,7 +232,6 @@ class cron (
     "cron::cron_allow_mode is <${cron_allow_mode}> and must be a valid four digit mode in octal notation.")
   validate_re($cron_deny_mode, '^[0-7]{4}$',
     "cron::cron_deny_mode is <${cron_deny_mode}> and must be a valid four digit mode in octal notation.")
-  # End of validation
 
   # functionality
   if $cron_allow_users {
