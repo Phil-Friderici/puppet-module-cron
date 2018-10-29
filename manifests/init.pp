@@ -188,17 +188,9 @@ class cron (
   }
   if $cron_allow_users != undef {
     validate_array($cron_allow_users)
-    cron::allow_deny_fragment { 'Initial cron.allow users':
-      type  => 'allow',
-      users => $cron_allow_users,
-    }
   }
   if $cron_deny_users != undef {
     validate_array($cron_deny_users)
-    cron::allow_deny_fragment { 'Initial cron.deny users':
-      type  => 'deny',
-      users => $cron_deny_users,
-    }
   }
 
   if $crontab_tasks != undef {
@@ -241,6 +233,20 @@ class cron (
   validate_re($cron_deny_mode, '^[0-7]{4}$',
     "cron::cron_deny_mode is <${cron_deny_mode}> and must be a valid four digit mode in octal notation.")
   # End of validation
+
+  # functionality
+  if $cron_allow_users {
+    cron::allow_deny_fragment { 'Initial cron.allow users':
+      type  => 'allow',
+      users => $cron_allow_users,
+    }
+  }
+  if $cron_deny_users {
+    cron::allow_deny_fragment { 'Initial cron.deny users':
+      type  => 'deny',
+      users => $cron_deny_users,
+    }
+  }
 
   # Initialize cron.allow
   concat { $cron_allow_path:
