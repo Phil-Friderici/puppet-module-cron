@@ -18,6 +18,9 @@ define cron::allow_deny_fragment (
     'deny'  => $cron::cron_deny_path,
   }
 
+  # functionality
+  $users_real = flatten($users)
+
   concat::fragment { $name:
     target  => $target,
     order   => '02',
