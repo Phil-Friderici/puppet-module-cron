@@ -314,6 +314,25 @@ cron::crontab_tasks:
     - "* 6 * * 7 root echo 'test'"
 </pre>
 
+## Define `cron::allow_deny_fragment`
+This define allows you to add users to cron.allow and cron.deny. This makes it is easy to add users from other modules or places.
+
+### Mandatory Parameters
+
+type (string)
+---------------
+Trigger the type where the users should get added to. Valid values are 'allow' and 'deny'.
+'allow' will add the users to the file specified in $cron::cron_allow_path (default: '/etc/cron.allow').
+'deny' will add the users to the file specified in $cron::cron_deny_path (default: '/etc/cron.deny').
+
+- *No default*
+
+users (array of string)
+----------------
+Array of users that will be added to the allow or deny configuration files as choosen by $cron::alow_deny_fragment::type.
+
+- *No defaukt*
+
 ## Define `cron::fragment`
 
 ### Parameters
