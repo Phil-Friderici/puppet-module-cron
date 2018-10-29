@@ -9,7 +9,8 @@ define cron::allow_deny_fragment (
 
   include ::cron
 
-  validate_re($type, ['^allow$','^deny$'])
+  validate_re($type, ['^allow$','^deny$'],
+    'cron::allow_deny_fragment must be allow or deny.')
   validate_array($users)
 
   $target = $type ? {
